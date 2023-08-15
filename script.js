@@ -1,22 +1,3 @@
-const cardList = [{
-    title: ' Dogs',
-    path: 'images/dogs.jpeg',
-    subTitle: 'Click on dogs',
-    description: 'Dogs are of different breeds and some of them are cute and some of them are not'
-},
-{
-    title: ' Elephant ',
-    path: 'images/elephant.jpeg',
-    subTitle: 'Click on elephants',
-    description: 'Elephants are tall and strong.'
-},
-{
-    title: 'Lion',
-    path: 'images/lion.jpeg',
-    subTitle: 'Click on lion',
-    description: 'Lion hunts at  night.'
-}];
-
 const addCards = (items) => {
     items.forEach(item => {
         let itemToAppend = '<div class="col s4 center-align">'+
@@ -24,7 +5,7 @@ const addCards = (items) => {
                 '</div><div class="card-content">'+
                 '<span class="card-title activator grey-text text-darken-4">'+item.title+'<i class="material-icons right">more_vert</i></span><p><a href="#">'+item.subTitle+'</a></p></div>'+
                 '<div class="card-reveal">'+
-                '<span class="card-title grey-text text-darken-4">'+item.title+'<i class="material-icons right">close</i></span>'+
+                '<span class="card-title grey-text text-darken-4">'+item.subTitle+'<i class="material-icons right">close</i></span>'+
                 '<p class="card-text">'+item.description+'</p>'+
                 '</div></div></div>';
         $("#card-section").append(itemToAppend)
@@ -33,12 +14,34 @@ const addCards = (items) => {
 
 const formSumitted = () => {
     let formData = {};
-    formData.firstName = $('#first_name').val();
-    formData.lastName = $('#last_name').val();
-    formData.password = $('#password').val();
-    formData.email = $('#email').val();
+    formData.title = $('#title').val();
+    formData.subTitle = $('#subTitle').val();
+    formData.path = $('#path').val();
+    formData.description = $('#description').val();
 
     console.log(formData);
+    postCat(formData);
+}
+
+function postCat(cat){
+    $.ajax({
+        url:'/api/cat',
+        type:'POST',
+        data:cat,
+        success: (result)=>{
+            if (result.statusCode === 201) {
+                alert('cat added');
+            }
+        }
+    });
+}
+
+function getAllCats(){
+    $.get('/api/cats', (result) => {
+        if (result.statusCode === 200) {
+            addCards(result.data);
+        }
+    });
 }
 
 $(document).ready(function(){
@@ -46,6 +49,6 @@ $(document).ready(function(){
     $('#formSubmit').click(()=>{
         formSumitted();
     });
-    addCards(cardList);
     $('.modal').modal();
+    getAllCats();
 });
